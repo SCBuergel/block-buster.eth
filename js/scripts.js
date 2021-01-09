@@ -43,11 +43,13 @@ function search() {
   if (query.length < 42) { // assume this is a block number
     let blockNo = parseInt(query, 10);
     console.log("searching block number " + blockNo);
+    let block = await proxiedWeb3.eth.getBlock(blockNo);
+    document.getElementById("results").value = "block information: " + JSON.stringify(block);
   }
-  else if (query.length == 42) { // assume this is a tx hash
-    console.log("searching tx hash " + query);
+  else if (query.length == 42) { // assume this is an address
+    console.log("searching tx or block hash " + query);
   }
-  else if (query.length == 66) { // assume this is a block hash
+  else if (query.length == 66) { // assume this is a tx or block hash
     console.log("searching block hash " + query);
   }
 }
