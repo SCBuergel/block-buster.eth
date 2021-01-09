@@ -37,6 +37,21 @@ let globalMinGasGWei = Number.MAX_SAFE_INTEGER;
 let globalMaxGasGWei = Number.MIN_SAFE_INTEGER;
 const numBins = 40;
 
+function search() {
+  let query = document.getElementById("query").value;
+  query = query.replace(/ /g,'');
+  if (query.length < 42) { // assume this is a block number
+    let blockNo = parseInt(query, 10);
+    console.log("searching block number " + blockNo);
+  }
+  else if (query.length == 42) { // assume this is a tx hash
+    console.log("searching tx hash " + query);
+  }
+  else if (query.length == 66) { // assume this is a block hash
+    console.log("searching block hash " + query);
+  }
+}
+
 function resetAll() {
 	txs.forEach((val, key, map) => {
 		val.row.remove();
