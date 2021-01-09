@@ -37,6 +37,23 @@ let globalMinGasGWei = Number.MAX_SAFE_INTEGER;
 let globalMaxGasGWei = Number.MIN_SAFE_INTEGER;
 const numBins = 40;
 
+function createBlockTable(tableData) {
+  var table = document.createElement("table");
+
+  for (let index in tableData) {
+    var tr = document.createElement("tr");
+    table.appendChild(tr);
+    var td1 = document.createElement("td");
+    tr.appendChild(td1);
+    td1.innerText = tableData[index][0];
+    var td2 = document.createElement("td");
+    tr.appendChild(td2);
+    td2.innerText = tableData[index][1];
+  }
+
+  return table;
+}
+
 async function search() {
   let query = document.getElementById("query").value;
   query = query.replace(/ /g,'');
@@ -45,25 +62,32 @@ async function search() {
     console.log("searching block number " + blockNo);
     let block = await proxiedWeb3.eth.getBlock(blockNo);
     let results = document.getElementById("results");
-    var table = document.createElement("table");
+
+    let tableData = [
+      [ "Block number:", block.number ],
+      [ "Timestamp:", new Date(block.timestamp * 1000).toLocaleDateString() + " - " + new Date(block.timestamp * 1000).toLocaleTimeString() ],
+      [ "Transactions:", block.transactions.length ],
+      [ "Gas limit:", block.gasLimit ],
+      [ "Gas used:", block.gasUsed ],
+      [ "Miner:", block.miner ],
+      [ "Parent block:", block.parentHash ],
+      [ "Uncles:", JSON.stringify(block.uncles) ],
+      [ "Difficulty:", block.difficulty ],
+      [ "Total difficulty:", block.totalDifficulty ],
+      [ "Size:", block.size ],
+      [ "Extra data:", block.extraData ],
+      [ "Hash:", block.hash ],
+      [ "Nonce:", block.nonce ],
+      [ "Logs bloom:", block.logsBloom ],
+      [ "Mix hash:", block.mixHash ],
+      [ "Receipts root:", block.receiptsRoot ],
+      [ "Sha3Uncles:", block.sha3Uncles ],
+      [ "State root", block.stateRoot ],
+      [ "Transactions root:", block.transactionsRoot ]
+    ];
+
+    let table = createBlockTable(tableData);
     results.appendChild(table);
-    var th = document.createElement("th");
-    table.appendChild(th);
-    var td11 = document.createElement("td");
-    th.appendChild(td11);
-    td11.innerText = "Block number";
-    var td12 = document.createElement("td");
-    th.appendChild(td12);
-    td12.innerText = "Timestamp";
-    
-    var tr = document.createElement("tr");
-    table.appendChild(tr);
-    var td21 = document.createElement("td");
-    tr.appendChild(td21);
-    td21.innerText = block.number;
-    var td22 = document.createElement("td");
-    tr.appendChild(td22);
-    td22.innerText = new Date(block.timestamp * 1000).toLocaleDateString() + " - " + new Date(block.timestamp * 1000).toLocaleTimeString();
 
     // {"difficulty":"17179869184","extraData":"0x11bbe8db4e347b4e8c937c1c8370e4b5ed33adb3db69cbdb7a38e1e50b1b82fa","gasLimit":5000,"gasUsed":0,"hash":"0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3","logsBloom":"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","miner":"0x0000000000000000000000000000000000000000","mixHash":"0x0000000000000000000000000000000000000000000000000000000000000000","nonce":"0x0000000000000042","number":0,"parentHash":"0x0000000000000000000000000000000000000000000000000000000000000000","receiptsRoot":"0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421","sha3Uncles":"0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347","size":540,"stateRoot":"0xd7f8974fb5ac78d9ac099b9ad5018bedc2ce0a72dad1827a1709da30580f0544","timestamp":0,"totalDifficulty":"17179869184","transactions":[],"transactionsRoot":"0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421","uncles":[]}
   }
@@ -180,7 +204,7 @@ function renderBlock(blockNo, blockTxs, blockGasUsed, row = null) {
 	cell5.innerHTML = typeof averageGas === 'number' ? averageGas.toFixed(2) : "-";
 	cell6.innerHTML = typeof tenthHighestGas === 'number' ? tenthHighestGas.toFixed(2) : "-";
 	cell7.innerHTML = typeof maxGas === 'number' ? maxGas.toFixed(2) : "-";
-	
+
 	let bins = [];
 	for (let c = 0; c < numBins; c++) {
 		bins[c] = 0;
@@ -201,7 +225,7 @@ function renderBlock(blockNo, blockTxs, blockGasUsed, row = null) {
 	let maxBin = Math.max(...bins);
 	let deltaBin = (maxBin - minBin) / numColors;
 	let colorLUT = ["_", "░", "▒", "▓", "█"];
-	
+
   let colorIndex;
 	for (let c = 0; c < bins.length; c++) {
 		if (bins[c] == 0)
@@ -246,7 +270,7 @@ async function loadBlocks() {
 
 		let globalLimitsChanged = false;
 		let processedTxs = 0;
-		
+
 		let row = table.insertRow();
 		let cell = row.insertCell(0);
 		row.insertCell(1);
@@ -273,12 +297,12 @@ async function loadBlocks() {
 		}));
 
 		row.remove();
-		
+
 		if (globalLimitsChanged)
 			renderAll();
 
 		let tableRow = renderBlock(blockNo, blockGasPrice, blockGasUsed);
-	
+
 		txs.set(blockNo, 
 			{
 				gasPricesGWei: blockGasPrice,
