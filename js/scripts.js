@@ -63,13 +63,13 @@ async function search() {
   if (query.length < 42) { // assume this is a block number
     let blockNo = parseInt(query, 10);
     let block = await proxiedWeb3.eth.getBlock(blockNo);
-
+    let percentGasUsed = (100 * block.gasUsed / block.gasLimit).toFixed(2);
     let tableData = [
       [ "Block number:", block.number ],
       [ "Timestamp:", new Date(block.timestamp * 1000).toLocaleDateString() + " - " + new Date(block.timestamp * 1000).toLocaleTimeString() ],
-      [ "Transactions:", block.transactions.length ],
-      [ "Gas limit:", block.gasLimit ],
-      [ "Gas used:", block.gasUsed ],
+      [ "Transactions:", block.transactions.length.toLocaleString() ],
+      [ "Gas limit:", block.gasLimit.toLocaleString() ],
+      [ "Gas used:", block.gasUsed.toLocaleString() + " (" + percentGasUsed + "%)" ],
       [ "Miner:", block.miner ],
       [ "Parent block:", block.parentHash ],
       [ "Uncles:", JSON.stringify(block.uncles) ],
