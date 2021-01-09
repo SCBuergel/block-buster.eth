@@ -44,7 +44,7 @@ async function search() {
     let blockNo = parseInt(query, 10);
     console.log("searching block number " + blockNo);
     let block = await proxiedWeb3.eth.getBlock(blockNo);
-    document.getElementById("results").value = "block information: " + JSON.stringify(block);
+    document.getElementById("results").innerText = "block information: " + JSON.stringify(block);
   }
   else if (query.length == 42) { // assume this is an address
     console.log("searching tx or block hash " + query);
