@@ -116,6 +116,27 @@ async function search() {
       console.log("oh, that wasn't a tx hash, so now we're assuming this is a block hash, let's see");
       tableData = await loadBlock(query);
     }
+    else { // it was actually a tx hash, so get the receipt
+      let txReceipt = await proxiedWeb3.eth.getTransactionReceipt(query);
+      let txData1  = [
+        [ "From:", tx.from ],
+        [ "To:", tx.to ],
+        [ "Value:", tx.value ]
+      ]
+      if (txReceipt) { // tx already mined
+        let txData2 = [
+          [ "Block hash:", txReceipt.blockHash ],
+          [ "Block number:", txReceipt.blockNumber ]
+        ];
+        tableData = txData1.concat(txData2);
+      }
+      else { // tx still pending
+        let txData0 = [
+          [ "Pending transaction!", "This transaction has not been mined yet. If you submitted this transaction, you can increase the gas price to speed it up" ]
+        ];
+        tableData = txData0.concat(txData1);
+      }
+    }
   }
   
   // now render the results
