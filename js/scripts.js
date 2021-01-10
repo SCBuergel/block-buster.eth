@@ -63,7 +63,7 @@ async function search() {
   if (query.length < 42) { // assume this is a block number
     let blockNo = parseInt(query, 10);
     let block = await proxiedWeb3.eth.getBlock(blockNo);
-    consol.log("got block: " + JSON.stringify(block));
+    console.log("got block: " + JSON.stringify(block));
     let percentGasUsed = (100 * block.gasUsed / block.gasLimit).toFixed(2);
     let tableData = [
       [ "Block number:", block.number ],
@@ -93,6 +93,12 @@ async function search() {
   }
   else if (query.length == 42) { // assume this is an address
     console.log("searching tx or block hash " + query);
+    let balance = await proxiedWeb3.eth.getBalance(query);
+    console.log("balance: " + balance);
+    let code = await proxiedWeb3.eth.getCode(query);
+    console.log("code:" + code);
+    let txCount = await proxiedWeb3.eth.getTransactionCount(query);
+    console.log("nonce: " + txCount);
   }
   else if (query.length == 66) { // assume this is a tx or block hash
     console.log("searching block hash " + query);
