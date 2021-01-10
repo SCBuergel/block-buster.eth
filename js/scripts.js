@@ -55,7 +55,7 @@ function createResultTable(tableData) {
   return table;
 }
 
-function loadBlock(blockNoOrHash) {
+async function loadBlock(blockNoOrHash) {
   let block = await proxiedWeb3.eth.getBlock(blockNoOrHash);
   if (!block)
     return;
