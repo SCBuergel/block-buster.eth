@@ -118,10 +118,11 @@ async function search() {
     }
     else { // it was actually a tx hash, so get the receipt
       let txReceipt = await proxiedWeb3.eth.getTransactionReceipt(query);
+      // TODO: add remaining tx and tx receipt data and render
       let txData1  = [
         [ "From:", tx.from ],
         [ "To:", tx.to ],
-        [ "Value:", tx.value ]
+        [ "Value:", (tx.value / 1e18).toLocaleString() ]
       ]
       if (txReceipt) { // tx already mined
         let txData2 = [
