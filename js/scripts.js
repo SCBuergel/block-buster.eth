@@ -95,7 +95,7 @@ async function search() {
 
   if (query.length < 42) { // assume this is a block number
     let blockNo = parseInt(query, 10);
-    tableData = loadBlock(blockNo);
+    tableData = await loadBlock(blockNo);
   }
   else if (query.length == 42) { // assume this is an address
     console.log("searching tx or block hash " + query);
@@ -118,7 +118,7 @@ async function search() {
     let tx = await proxiedWeb3.eth.getTransaction(query);
     if (!tx) { // it's not a tx so assume this is a block hash
       console.log("oh, that wasn't a tx hash, so now we're assuming this is a block hash, let's see");
-      tableData = loadBlock(query);
+      tableData = await loadBlock(query);
     }
   }
   
