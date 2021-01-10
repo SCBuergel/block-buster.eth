@@ -46,6 +46,7 @@ function createBlockTable(tableData) {
     var td1 = document.createElement("td");
     tr.appendChild(td1);
     td1.innerText = tableData[index][0];
+    td1.style.fontWeight = "bold";
     var td2 = document.createElement("td");
     tr.appendChild(td2);
     td2.innerText = tableData[index][1];
@@ -56,6 +57,7 @@ function createBlockTable(tableData) {
 
 async function search() {
   let query = document.getElementById("query").value;
+  document.getElementById("query").value = ""; // reset search box
   query = query.replace(/ /g,''); // remove all whitespaces
   let results = document.getElementById("results");
   results.textContent = ""; // remove previously existing search results
@@ -99,6 +101,14 @@ async function search() {
     console.log("code:" + code);
     let txCount = await proxiedWeb3.eth.getTransactionCount(query);
     console.log("nonce: " + txCount);
+    let tableData = [
+      [ "Address:", query ],
+      [ "Balance:", balance + " ETH" ],
+      [ "Transaction count:", txCount ],
+      [ "Code:", code]
+    ];
+    let table = createBlockTable(tableData);
+    results.appendChild(table);
   }
   else if (query.length == 66) { // assume this is a tx or block hash
     console.log("searching block hash " + query);
