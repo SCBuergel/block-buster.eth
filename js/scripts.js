@@ -91,8 +91,6 @@ async function search() {
   let query = document.getElementById("query").value;
   document.getElementById("query").value = ""; // reset search box
   query = query.replace(/ /g,''); // remove all whitespaces
-  let results = document.getElementById("results");
-  results.textContent = ""; // remove previously existing search results
   let tableData;
 
   if (query.length < 42) { // assume this is a block number
@@ -123,10 +121,16 @@ async function search() {
       tableData = loadBlock(query);
     }
   }
+  
+  // now render the results
+  let results = document.getElementById("results");
+  results.textContent = ""; // remove previously existing search results
   if (tableData) {
+    console.log("no tableData found");
     let table = createResultTable(tableData);
     results.appendChild(table);
   } else {
+    console.log("table data found");
     let div = document.createElement("div");
     div.innerText = "No block number, block hash or transaction hash found :( You were looking for: " + query;
     results.appendChild(div);
