@@ -37,7 +37,7 @@ let globalMinGasGWei = Number.MAX_SAFE_INTEGER;
 let globalMaxGasGWei = Number.MIN_SAFE_INTEGER;
 const numBins = 40;
 
-function createBlockTable(tableData) {
+function createResultTable(tableData) {
   var table = document.createElement("table");
 
   for (let index in tableData) {
@@ -55,63 +55,81 @@ function createBlockTable(tableData) {
   return table;
 }
 
+function loadBlock(blockNoOrHash) {
+  let block = await proxiedWeb3.eth.getBlock(blockNoOrHash);
+  if (!block)
+    return;
+  console.log("got block: " + JSON.stringify(block));
+  let percentGasUsed = (100 * block.gasUsed / block.gasLimit).toFixed(2);
+  let tableData = [
+    [ "Block number:", block.number ],
+    [ "Timestamp:", new Date(block.timestamp * 1000).toLocaleDateString() + " - " + new Date(block.timestamp * 1000).toLocaleTimeString() ],
+    [ "Transactions:", block.transactions.length.toLocaleString() ],
+    [ "Gas limit:", block.gasLimit.toLocaleString() ],
+    [ "Gas used:", block.gasUsed.toLocaleString() + " (" + percentGasUsed + "%)" ],
+    [ "Miner:", block.miner ],
+    [ "Parent block:", block.parentHash ],
+    [ "Uncles:", JSON.stringify(block.uncles) ],
+    [ "Difficulty:", block.difficulty ],
+    [ "Total difficulty:", block.totalDifficulty ],
+    [ "Size:", block.size ],
+    [ "Extra data:", block.extraData ],
+    [ "Hash:", block.hash ],
+    [ "Nonce:", block.nonce ],
+    [ "Logs bloom:", block.logsBloom ],
+    [ "Mix hash:", block.mixHash ],
+    [ "Receipts root:", block.receiptsRoot ],
+    [ "Sha3Uncles:", block.sha3Uncles ],
+    [ "State root", block.stateRoot ],
+    [ "Transactions root:", block.transactionsRoot ]
+  ];
+
+  return tableData;
+}
+
 async function search() {
   let query = document.getElementById("query").value;
   document.getElementById("query").value = ""; // reset search box
   query = query.replace(/ /g,''); // remove all whitespaces
   let results = document.getElementById("results");
   results.textContent = ""; // remove previously existing search results
+  let tableData;
 
   if (query.length < 42) { // assume this is a block number
     let blockNo = parseInt(query, 10);
-    let block = await proxiedWeb3.eth.getBlock(blockNo);
-    console.log("got block: " + JSON.stringify(block));
-    let percentGasUsed = (100 * block.gasUsed / block.gasLimit).toFixed(2);
-    let tableData = [
-      [ "Block number:", block.number ],
-      [ "Timestamp:", new Date(block.timestamp * 1000).toLocaleDateString() + " - " + new Date(block.timestamp * 1000).toLocaleTimeString() ],
-      [ "Transactions:", block.transactions.length.toLocaleString() ],
-      [ "Gas limit:", block.gasLimit.toLocaleString() ],
-      [ "Gas used:", block.gasUsed.toLocaleString() + " (" + percentGasUsed + "%)" ],
-      [ "Miner:", block.miner ],
-      [ "Parent block:", block.parentHash ],
-      [ "Uncles:", JSON.stringify(block.uncles) ],
-      [ "Difficulty:", block.difficulty ],
-      [ "Total difficulty:", block.totalDifficulty ],
-      [ "Size:", block.size ],
-      [ "Extra data:", block.extraData ],
-      [ "Hash:", block.hash ],
-      [ "Nonce:", block.nonce ],
-      [ "Logs bloom:", block.logsBloom ],
-      [ "Mix hash:", block.mixHash ],
-      [ "Receipts root:", block.receiptsRoot ],
-      [ "Sha3Uncles:", block.sha3Uncles ],
-      [ "State root", block.stateRoot ],
-      [ "Transactions root:", block.transactionsRoot ]
-    ];
-
-    let table = createBlockTable(tableData);
-    results.appendChild(table);
+    tableData = loadBlock(blockNo);
   }
   else if (query.length == 42) { // assume this is an address
     console.log("searching tx or block hash " + query);
     let balance = await proxiedWeb3.eth.getBalance(query);
-    console.log("balance: " + balance);
+    console.log("balance: " + parseInt(balance)/1e18);
     let code = await proxiedWeb3.eth.getCode(query);
     console.log("code:" + code);
     let txCount = await proxiedWeb3.eth.getTransactionCount(query);
     console.log("nonce: " + txCount);
-    let tableData = [
+    tableData = [
       [ "Address:", query ],
       [ "Balance:", balance + " ETH" ],
       [ "Transaction count:", txCount ],
       [ "Code:", code]
     ];
-    let table = createBlockTable(tableData);
-    results.appendChild(table);
+    // TODO: here we should allow user to query storage
   }
   else if (query.length == 66) { // assume this is a tx or block hash
-    console.log("searching block hash " + query);
+    console.log("searching tx hash " + query);
+    let tx = await proxiedWeb3.eth.getTransaction(query);
+    if (!tx) { // it's not a tx so assume this is a block hash
+      console.log("oh, that wasn't a tx hash, so now we're assuming this is a block hash, let's see");
+      tableData = loadBlock(query);
+    }
+  }
+  if (tableData) {
+    let table = createResultTable(tableData);
+    results.appendChild(table);
+  } else {
+    let div = document.createElement("div");
+    div.innerText = "No block number, block hash or transaction hash found :( You were looking for: " + query;
+    results.appendChild(div);
   }
 }
 
