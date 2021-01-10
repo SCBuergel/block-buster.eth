@@ -70,9 +70,9 @@ async function loadBlock(blockNoOrHash) {
     [ "Miner:", block.miner ],
     [ "Parent block:", block.parentHash ],
     [ "Uncles:", JSON.stringify(block.uncles) ],
-    [ "Difficulty:", block.difficulty ],
-    [ "Total difficulty:", block.totalDifficulty ],
-    [ "Size:", block.size ],
+    [ "Difficulty:", block.difficulty.toLocaleString() ],
+    [ "Total difficulty:", block.totalDifficulty.toLocaleString() ],
+    [ "Size:", block.size.toLocaleString() ],
     [ "Extra data:", block.extraData ],
     [ "Hash:", block.hash ],
     [ "Nonce:", block.nonce ],
@@ -98,13 +98,9 @@ async function search() {
     tableData = await loadBlock(blockNo);
   }
   else if (query.length == 42) { // assume this is an address
-    console.log("searching tx or block hash " + query);
-    let balance = await proxiedWeb3.eth.getBalance(query);
-    console.log("balance: " + parseInt(balance)/1e18);
+    let balance = ((await proxiedWeb3.eth.getBalance(query)) / 1e18).toLocaleString();
     let code = await proxiedWeb3.eth.getCode(query);
-    console.log("code:" + code);
-    let txCount = await proxiedWeb3.eth.getTransactionCount(query);
-    console.log("nonce: " + txCount);
+    let txCount = (await proxiedWeb3.eth.getTransactionCount(query)).toLocaleString();
     tableData = [
       [ "Address:", query ],
       [ "Balance:", balance + " ETH" ],
@@ -126,11 +122,9 @@ async function search() {
   let results = document.getElementById("results");
   results.textContent = ""; // remove previously existing search results
   if (tableData) {
-    console.log("no tableData found");
     let table = createResultTable(tableData);
     results.appendChild(table);
   } else {
-    console.log("table data found");
     let div = document.createElement("div");
     div.innerText = "No block number, block hash or transaction hash found :( You were looking for: " + query;
     results.appendChild(div);
