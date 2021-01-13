@@ -127,7 +127,8 @@ async function search() {
       if (txReceipt) { // tx already mined
         let txData2 = [
           [ "Block hash:", txReceipt.blockHash ],
-          [ "Block number:", txReceipt.blockNumber ]
+          [ "Block number:", txReceipt.blockNumber ],
+          [ "Gas used / limit:", txReceipt.gasUsed + " of " + tx.gasLimit + " (" + (txReceipt.gasUsed / tx.gasLimit * 100).toLocaleString() + "%)"]
         ];
         tableData = txData1.concat(txData2);
       }
