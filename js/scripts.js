@@ -122,7 +122,7 @@ async function search() {
       let txData1  = [
         [ "From:", tx.from ],
         [ "To:", tx.to ],
-        [ "Value:", (tx.value / 1e18).toLocaleString() ],
+        [ "Value:", (tx.value / 1e18).toLocaleString(undefined, {maximumFractionDigits: 18}) ],
         [ "Transaction hash:", tx.hash ],
         [ "Input:", tx.input ],
         [ "Nonce:", tx.nonce.toLocaleString() ],
@@ -134,8 +134,8 @@ async function search() {
           [ "Block hash:", txReceipt.blockHash ],
           [ "Block number:", txReceipt.blockNumber.toLocaleString() ],
           [ "Gas used / limit:", txReceipt.gasUsed.toLocaleString() + " of " + tx.gas.toLocaleString() + " (" + (txReceipt.gasUsed / tx.gas * 100).toFixed(2) + "%)"],
-          [ "Gas price: ", (tx.gasPrice / 1e9).toLocaleString() ],
-          [ "Transaction fee: ", (tx.gasPrice * txReceipt.gasUsed / 1e18).toLocaleString() + " ETH" ],
+          [ "Gas price: ", (tx.gasPrice / 1e9) + " GWei" ],
+          [ "Transaction fee: ", (tx.gasPrice * txReceipt.gasUsed / 1e18).toLocaleString(undefined, {maximumFractionDigits: 18}) + " ETH" ],
           [ "Cumulativ gas used:", txReceipt.cumulativeGasUsed.toLocaleString() ],
           [ "Logs:", txReceipt.logs.length.toLocaleString() ],
           [ "Logs bloom:", txReceipt.logsBloom ],
@@ -152,7 +152,7 @@ async function search() {
       }
     }
   }
-  
+
   // now render the results
   let results = document.getElementById("results");
   results.textContent = ""; // remove previously existing search results
