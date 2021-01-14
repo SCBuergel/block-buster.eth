@@ -134,7 +134,7 @@ async function search() {
           [ "Block hash:", txReceipt.blockHash ],
           [ "Block number:", txReceipt.blockNumber.toLocaleString() ],
           [ "Gas used / limit:", txReceipt.gasUsed.toLocaleString() + " of " + tx.gas.toLocaleString() + " (" + (txReceipt.gasUsed / tx.gas * 100).toFixed(2) + "%)"],
-          [ "Gas price / tx cost: ", ((tx.gasPrice / 1e9).toFixed(2)).toLocaleString() ],
+          [ "Gas price: ", (tx.gasPrice / 1e9).toLocaleString() ],
           [ "Transaction fee: ", (tx.gasPrice * txReceipt.gasUsed / 1e18).toLocaleString() + " ETH" ],
           [ "Cumulativ gas used:", txReceipt.cumulativeGasUsed.toLocaleString() ],
           [ "Logs:", txReceipt.logs.length.toLocaleString() ],
