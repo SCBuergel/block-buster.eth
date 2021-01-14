@@ -122,13 +122,25 @@ async function search() {
       let txData1  = [
         [ "From:", tx.from ],
         [ "To:", tx.to ],
-        [ "Value:", (tx.value / 1e18).toLocaleString() ]
+        [ "Value:", (tx.value / 1e18).toLocaleString() ],
+        [ "Transaction hash:", tx.hash ],
+        [ "Input:", tx.input ],
+        [ "Nonce:", tx.nonce.toLocaleString() ],
+        [ "Signature (r, s, v):", tx.r + ", " + tx.s + ", " + tx.v ],
+        [ "Transaction index:", tx.transactionIndex.toLocaleString() ]
       ]
       if (txReceipt) { // tx already mined
         let txData2 = [
           [ "Block hash:", txReceipt.blockHash ],
-          [ "Block number:", txReceipt.blockNumber ],
-          [ "Gas used / limit:", txReceipt.gasUsed.toLocaleString() + " of " + tx.gas.toLocaleString() + " (" + (txReceipt.gasUsed / tx.gas * 100).toLocaleString() + "%)"]
+          [ "Block number:", txReceipt.blockNumber.toLocaleString() ],
+          [ "Gas used / limit:", txReceipt.gasUsed.toLocaleString() + " of " + tx.gas.toLocaleString() + " (" + (txReceipt.gasUsed / tx.gas * 100).toFixed(2) + "%)"],
+          [ "Gas price / tx cost: ", ((tx.gasPrice / 1e9).toFixed(2)).toLocaleString() ],
+          [ "Transaction fee: ", (tx.gasPrice * txReceipt.gasUsed / 1e18).toLocaleString() + " ETH" ],
+          [ "Cumulativ gas used:", txReceipt.cumulativeGasUsed.toLocaleString() ],
+          [ "Logs:", txReceipt.logs.length.toLocaleString() ],
+          [ "Logs bloom:", txReceipt.logsBloom ],
+          [ "Root:", txReceipt.root ],
+          [ "TransactionIndex:", txReceipt.transactionIndex ]
         ];
         tableData = txData1.concat(txData2);
       }
