@@ -128,7 +128,7 @@ async function search() {
         let txData2 = [
           [ "Block hash:", txReceipt.blockHash ],
           [ "Block number:", txReceipt.blockNumber ],
-          [ "Gas used / limit:", txReceipt.gasUsed + " of " + tx.gasLimit + " (" + (txReceipt.gasUsed / tx.gasLimit * 100).toLocaleString() + "%)"]
+          [ "Gas used / limit:", txReceipt.gasUsed + " of " + tx.gas + " (" + (txReceipt.gasUsed / tx.gas * 100).toLocaleString() + "%)"]
         ];
         tableData = txData1.concat(txData2);
       }
