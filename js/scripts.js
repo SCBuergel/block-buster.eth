@@ -48,6 +48,7 @@ function createResultTable(tableData) {
 }
 
 function toggleExpand(element) {
+  console.log("toggling... " + element.style.wordWrap);
   if (element.style.wordWrap == "break-word")
     element.style.wordWrap = "normal";
   else
