@@ -21,7 +21,7 @@ const proxiedWeb3Handler = {
 };
 
 let proxiedWeb3;
-let columnWidth = "100px";
+let columnWidth = "200px";
 
 function createResultTable(tableData) {
   var table = document.createElement("table");
@@ -49,7 +49,6 @@ function createResultTable(tableData) {
 
 function toggleExpand(e) {
   element = e.target;
-  console.log("toggling... " + element.style.wordWrap);
   if (element.style.wordWrap == "break-word")
     element.style.wordWrap = "normal";
   else
