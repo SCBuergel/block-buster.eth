@@ -84,6 +84,7 @@ async function loadBlock(blockNoOrHash) {
     [ "Transactions root:", block.transactionsRoot ]
   ];
 
+  // TODO: return list of transactions in block and render in separate tab (paginated)
   return tableData;
 }
 
@@ -107,13 +108,11 @@ async function search() {
       [ "Transaction count:", txCount ],
       [ "Code:", code]
     ];
-    // TODO: here we should allow user to query storage
+    // TODO: let user to query storage
   }
   else if (query.length == 66) { // assume this is a tx or block hash
-    console.log("searching tx hash " + query);
     let tx = await proxiedWeb3.eth.getTransaction(query);
     if (!tx) { // it's not a tx so assume this is a block hash
-      console.log("oh, that wasn't a tx hash, so now we're assuming this is a block hash, let's see");
       tableData = await loadBlock(query);
     }
     else { // it was actually a tx hash, so get the receipt
@@ -142,6 +141,7 @@ async function search() {
           [ "TransactionIndex:", txReceipt.transactionIndex ]
         ];
         tableData = txData1.concat(txData2);
+        // TODO: retrieve logs and render in separate tab
       }
       else { // tx still pending
         let txData0 = [
@@ -187,7 +187,6 @@ function createWeb3() {
   }
 
   // finally create the objects and try using that endpoint to obtain the latest block number to see if all is ok
-  //console.log("now creating web3 object...");
   let web3 = new Web3(endpoint);
   proxiedWeb3 = new Proxy(web3, proxiedWeb3Handler);
 }
