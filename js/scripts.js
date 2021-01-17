@@ -41,13 +41,14 @@ function createResultTable(tableData) {
     td2.style.overflow = "hidden";
     td2.style.textOverflow = "ellipsis";
     td2.style.wordWrap = "normal";
-    td2.onclick = toggleExpand(td2);
+    td2.onclick = toggleExpand;
   }
 
   return table;
 }
 
-function toggleExpand(ev, element) {
+function toggleExpand(e) {
+  element = e.target;
   console.log("toggling... " + element.style.wordWrap);
   if (element.style.wordWrap == "break-word")
     element.style.wordWrap = "normal";
