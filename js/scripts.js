@@ -36,7 +36,7 @@ function createResultTable(tableData) {
     td1.style.fontWeight = "bold";
     var td2 = document.createElement("td");
     tr.appendChild(td2);
-    if (tableData[index][1].length > maxUncroppedStringLength) {
+    if (tableData[index][1] && tableData[index][1].length > maxUncroppedStringLength) {
       let text = tableData[index][1].substr(0, maxUncroppedStringLength);
       td2.innerText = text + "[...]";
     } else {
