@@ -20,22 +20,8 @@ const proxiedWeb3Handler = {
   },
 };
 
-// from https://github.com/30-seconds/30-seconds-of-code/blob/master/snippets/median.md
-const median = arr => {
-  const mid = Math.floor(arr.length / 2),
-    nums = [...arr].sort((a, b) => a - b);
-  return arr.length % 2 !== 0 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2;
-};
-
-const average = list => list.reduce((prev, curr) => prev + curr) / list.length;
-
 let proxiedWeb3;
-let numBlocks = 10;
-let txs = new Map();
-let running = false;
-let globalMinGasGWei = Number.MAX_SAFE_INTEGER;
-let globalMaxGasGWei = Number.MIN_SAFE_INTEGER;
-const numBins = 40;
+let maxUncroppedStringLength = 66;
 
 function createResultTable(tableData) {
   var table = document.createElement("table");
@@ -45,11 +31,17 @@ function createResultTable(tableData) {
     table.appendChild(tr);
     var td1 = document.createElement("td");
     tr.appendChild(td1);
+    // TODO: if data > 66 chars, add "..." and enable a toggle function to show all or cropped view (cropped by default)
     td1.innerText = tableData[index][0];
     td1.style.fontWeight = "bold";
     var td2 = document.createElement("td");
     tr.appendChild(td2);
-    td2.innerText = tableData[index][1];
+    if (tableData[index][1].length > maxUncroppedStringLength) {
+      let text = tableData[index][1].substr(0, maxUncroppedStringLength);
+      td2.innerText = text + "[...]";
+    } else {
+      td2.innerText = tableData[index][1];
+    }
   }
 
   return table;
@@ -118,7 +110,6 @@ async function search() {
     }
     else { // it was actually a tx hash, so get the receipt
       let txReceipt = await proxiedWeb3.eth.getTransactionReceipt(query);
-      // TODO: add remaining tx and tx receipt data and render
       let txData1  = [
         [ "From:", tx.from ],
         [ "To:", tx.to ],
@@ -166,16 +157,6 @@ async function search() {
   }
 }
 
-function findSmallestNonZero(data) {
-	let smallest = Number.MAX_SAFE_INTEGER;
-	for (let c = 0; c < data.length; c++) {
-		if (data[c] < smallest && data[c] > 0) {
-			smallest = data[c];
-		}
-	}
-	return smallest;
-}
-
 function createWeb3() {
 	// create web3 object (because web3 endpoint might have changed)
 	let endpointInput = document.getElementById("web3Endpoint").value;
@@ -202,6 +183,8 @@ function createWeb3() {
   let web3 = new Web3(endpoint);
   proxiedWeb3 = new Proxy(web3, proxiedWeb3Handler);
 }
+
+// TODO: add button to reload web3 endpoint and show some basic node stats
 
 window.onload = function() {
 	createWeb3();
