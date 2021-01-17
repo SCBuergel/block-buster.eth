@@ -21,7 +21,7 @@ const proxiedWeb3Handler = {
 };
 
 let proxiedWeb3;
-let maxUncroppedStringLength = 66;
+let columnWidth = "100px";
 
 function createResultTable(tableData) {
   var table = document.createElement("table");
@@ -31,20 +31,27 @@ function createResultTable(tableData) {
     table.appendChild(tr);
     var td1 = document.createElement("td");
     tr.appendChild(td1);
-    // TODO: if data > 66 chars, add "..." and enable a toggle function to show all or cropped view (cropped by default)
     td1.innerText = tableData[index][0];
     td1.style.fontWeight = "bold";
     var td2 = document.createElement("td");
     tr.appendChild(td2);
-    if (tableData[index][1] && tableData[index][1].length > maxUncroppedStringLength) {
-      let text = tableData[index][1].substr(0, maxUncroppedStringLength);
-      td2.innerText = text + "[...]";
-    } else {
-      td2.innerText = tableData[index][1];
-    }
+    td2.innerText = tableData[index][1];
+    td2.style.display = "block";
+    td2.style.width = columnWidth;
+    td2.style.overflow = "hidden";
+    td2.style.textOverflow = "ellipsis";
+    td2.style.wordWrap = "normal";
+    td2.onlick = toggleExpand(td2);
   }
 
   return table;
+}
+
+function toggleExpand(element) {
+  if (element.style.wordWrap == "break-word")
+    element.style.wordWrap = "normal";
+  else
+    element.style.wordWrap = "break-word";
 }
 
 async function loadBlock(blockNoOrHash) {
