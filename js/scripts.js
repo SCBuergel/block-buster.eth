@@ -41,7 +41,7 @@ function createResultTable(tableData) {
     td2.style.overflow = "hidden";
     td2.style.textOverflow = "ellipsis";
     td2.style.wordWrap = "normal";
-    td2.onlick = toggleExpand(td2);
+    td2.onclick = toggleExpand(td2);
   }
 
   return table;
